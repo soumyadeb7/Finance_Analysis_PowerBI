@@ -34,7 +34,7 @@ Here are the dashboards that I created. If you would like to actually play aroun
 
 ![ExecSumm](https://github.com/soumyadeb7/Finance_Analysis_PowerBI/blob/main/Finance_Analysis_PowerBI-master/images/executive_summary.png)
 
-![alt text][Granular]
+![Granular](https://raw.githubusercontent.com/soumyadeb7/Finance_Analysis_PowerBI/refs/heads/main/Finance_Analysis_PowerBI-master/images/granular_info.png)
 
 
 ## Hardware and Software Used
