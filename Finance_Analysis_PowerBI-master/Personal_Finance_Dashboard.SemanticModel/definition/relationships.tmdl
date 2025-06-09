@@ -1,0 +1,12 @@
+relationship c9748e00-18f3-4b06-87af-ce17c8fcde4e
+	fromColumn: Finance_Data.DATE
+	toColumn: Calendar_Lookup.Date
+
+relationship 91cdd936-56bd-4b27-8944-653fc4d9f251
+	fromColumn: Finance_Data.LOCATION
+	toColumn: Location_Lookup.Location
+
+relationship 7f9fb4c0-0963-48d9-b658-8bf0ff3cdf58
+	fromColumn: Finance_Data.ITEM
+	toColumn: Item_Lookup.Item
+

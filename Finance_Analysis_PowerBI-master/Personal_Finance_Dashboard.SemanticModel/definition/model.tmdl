@@ -1,0 +1,29 @@
+model Model
+	culture: en-CA
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-CA
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+/// Errors in queries that were loaded on 2021-01-04 4:15:37 PM.
+queryGroup 'Query Errors - 2021-01-04 4:15:37 PM'
+
+	annotation PBI_QueryGroupOrder = 0
+
+annotation PBI_QueryOrder = ["Finance_Data"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.143.1378.0 (25.05)+4e1de9c957866bc5336e0d250838314aa54ff3a8
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table Finance_Data
+ref table DateTableTemplate_c6b7bd14-411c-4e0e-9c21-180d4e885da0
+ref table Calendar_Lookup
+ref table Location_Lookup
+ref table Item_Lookup
+
+ref cultureInfo en-CA
+

@@ -1,0 +1,19 @@
+table Location_Lookup
+	lineageTag: df170be7-d3fc-4852-ad1b-b59ea0b75979
+
+	column Location
+		lineageTag: d5790127-170b-43c3-b844-58f685ed86a1
+		dataCategory: Place
+		summarizeBy: none
+		sourceColumn: Finance_Data[LOCATION]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	partition Location_Lookup-281def56-707b-480b-a02b-dff227ec1348 = calculated
+		mode: import
+		source = GROUPBY('Finance_Data', 'Finance_Data'[LOCATION])
+
+	annotation PBI_Id = 5d1b03ca8a6b43828b9bba2be365a1ca
+

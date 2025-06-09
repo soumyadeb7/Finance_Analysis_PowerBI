@@ -1,0 +1,113 @@
+table Calendar_Lookup
+	lineageTag: 23e6e946-5707-4259-8253-823ebd837fd7
+	dataCategory: Time
+
+	column Date
+		isKey
+		lineageTag: a0956c55-de3e-49ed-bdaa-5b50fd7540b2
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Year = YEAR('Calendar_Lookup'[Date])
+		formatString: 0
+		lineageTag: b4c14327-3aac-4183-ac7f-50a0c3d934bf
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month_Number = MONTH('Calendar_Lookup'[Date])
+		formatString: 0
+		lineageTag: 94d2285e-a9a0-489d-b65a-af40a7c05465
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month_Name = FORMAT('Calendar_Lookup'[Date], "MMMM")
+		dataType: string
+		lineageTag: 88f4e65c-91a7-4e1a-a553-ab3eeb92d9cb
+		summarizeBy: none
+		sortByColumn: Month_Number
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	column Day = DAY('Calendar_Lookup'[Date])
+		formatString: 0
+		lineageTag: db9f3194-6215-4dc6-b336-969a04df8b25
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Month_and_Year = 'Calendar_Lookup'[Month_Name] & " " & 'Calendar_Lookup'[Year]
+		dataType: dateTime
+		formatString: mmmm yyyy
+		lineageTag: ecd4edb6-d946-46e2-9d29-3902ca248ffc
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isCustom":true}
+
+	column Day_Name = FORMAT('Calendar_Lookup'[Date], "DDDD")
+		lineageTag: 734b17d7-b11d-48fd-a24f-cd9098b52044
+		summarizeBy: none
+		sortByColumn: Day_Number
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	column Quarter = QUARTER('Calendar_Lookup'[Date])
+		formatString: 0
+		lineageTag: ab92b817-82a2-42af-b530-a23450abaa73
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column Day_Number = WEEKDAY('Calendar_Lookup'[Date], 1)
+		formatString: 0
+		lineageTag: 3baecc7e-2a09-4a8a-acab-1599fdb8ac43
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column End_of_Week = 'Calendar_Lookup'[Date] + (7 - 'Calendar_Lookup'[Day_Number])
+		lineageTag: 656060a6-3b4b-43bc-8d79-9ef8474e2ae9
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column Weekday = IF(OR(Calendar_Lookup[Day_Name] = "Saturday", Calendar_Lookup[Day_Name] = "Sunday"), "Weekend", "Weekday")
+		lineageTag: 5db93c91-0daf-4c42-9ad6-c4424fde1fd8
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	column End_of_Month = ENDOFMONTH(Calendar_Lookup[Date])
+		lineageTag: ee6aa782-966a-458a-a08b-f807e7523cc1
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	partition Calendar_Lookup-fce3c784-922e-42e5-a65a-627601b3d8ea = calculated
+		mode: import
+		source = CALENDAR(FIRSTDATE('Finance_Data'[DATE]), LASTDATE('Finance_Data'[DATE]))
+
+	annotation PBI_Id = 19dcd7a404584c8daf3bc5fdac8575ad
+

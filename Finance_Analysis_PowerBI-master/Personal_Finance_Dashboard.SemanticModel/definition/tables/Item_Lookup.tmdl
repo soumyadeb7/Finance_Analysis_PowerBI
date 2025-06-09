@@ -1,0 +1,26 @@
+table Item_Lookup
+	lineageTag: 2cdd8ffb-ec37-46da-9d5e-0bf6dec62235
+
+	column Item
+		lineageTag: 81c5ca98-3a8f-48c0-9773-313f0cd9a086
+		summarizeBy: none
+		sourceColumn: Finance_Data[ITEM]
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	column NoRent(Boolean) = IF(Item_Lookup[Item] = "Rent", "Yes", "No")
+		lineageTag: dddcf4e5-bc47-4420-969e-d1a0a0b02b9a
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	partition Item_Lookup-188dd609-0fb9-4f43-8fa9-67fbe88ce820 = calculated
+		mode: import
+		source = GROUPBY('Finance_Data', 'Finance_Data'[ITEM])
+
+	annotation PBI_Id = c5b49d8517544f46a213e76a760e268e
+

@@ -1,0 +1,203 @@
+table Finance_Data
+	lineageTag: 8796d939-c02d-4e84-bf9e-0862d548f399
+
+	measure Total_Costs = ROUND(SUM(Finance_Data[COST]), 2)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 3b65538c-bb70-4f97-89f6-0097497bc200
+
+	measure 'Total_Costs average per ITEM' =
+			
+			AVERAGEX(
+				KEEPFILTERS(VALUES('Finance_Data'[ITEM])),
+				CALCULATE([Total_Costs])
+			)
+		formatString: \$#,0.###############;-\$#,0.###############;\$#,0.###############
+		lineageTag: 5847412c-ce60-4371-8546-f272c5743650
+
+		extendedProperty MeasureTemplate =
+				{
+				  "version": 0,
+				  "daxTemplateName": "AveragePerCategory"
+				}
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-CA"}
+
+	measure 'COST average per Month_Name' =
+			
+			AVERAGEX(
+				KEEPFILTERS(VALUES('Calendar_Lookup'[Month_and_Year])),
+				CALCULATE(SUM('Finance_Data'[COST]))
+			)
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: afbd7594-5dc2-4d5d-a24f-c931dbd3a412
+
+		extendedProperty MeasureTemplate =
+				{
+				  "version": 0,
+				  "daxTemplateName": "AveragePerCategory"
+				}
+
+	measure 'COST average per End_of_Week' =
+			
+			AVERAGEX(
+				KEEPFILTERS(VALUES('Calendar_Lookup'[End_of_Week])),
+				CALCULATE(SUM('Finance_Data'[COST]))
+			)
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: a7037dc3-0446-42a9-9f7c-9502402af896
+
+		extendedProperty MeasureTemplate =
+				{
+				  "version": 0,
+				  "daxTemplateName": "AveragePerCategory"
+				}
+
+	measure 'COST average per day' = ROUND(SUM(Finance_Data[COST]) / COUNTROWS(Calendar_Lookup), 2)
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 65032dd0-0333-45a4-93a7-ef8cb2137497
+
+	measure Total_Costs_Food = CALCULATE(SUM(Finance_Data[COST]), Finance_Data[ITEM] = "Food")
+		formatString: \$#,0.###############;-\$#,0.###############;\$#,0.###############
+		lineageTag: b2cd78a4-8a35-42cd-9fa9-acb223b6a704
+
+		annotation PBI_FormatHint = {"currencyCulture":"en-CA"}
+
+	measure Target_Monthly_Food_Cost = 250.00 * DISTINCTCOUNT(Calendar_Lookup[Month_and_Year])
+		lineageTag: e7b07f29-6c64-4a42-be7b-41e776342939
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LOCATION
+		dataType: string
+		lineageTag: 11ed9cfc-fb5f-4e98-be3e-87c16d080592
+		summarizeBy: none
+		sourceColumn: LOCATION
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	column ITEM
+		dataType: string
+		lineageTag: 6de4eaef-e08b-4cab-9911-e406ded47f78
+		summarizeBy: none
+		sourceColumn: ITEM
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	column COST
+		dataType: decimal
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: 655e5605-b857-49b7-a418-694ea5ac4fc9
+		summarizeBy: sum
+		sourceColumn: COST
+
+		annotation SummarizationSetBy = Automatic
+
+	column COMMENTS
+		dataType: string
+		lineageTag: f2bdcf72-4d9e-4e1d-9e25-f5f3c07bb05f
+		summarizeBy: none
+		sourceColumn: COMMENTS
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	column DATE
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 49a686c0-f5c8-4298-b9ad-8294734bd32f
+		summarizeBy: none
+		sourceColumn: DATE
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Food(Boolean)
+		dataType: string
+		lineageTag: a3112b18-d1a8-4f55-ab8e-c80be88b9dd7
+		summarizeBy: none
+		sourceColumn: Food(Boolean)
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	column Sick(Boolean)
+		dataType: string
+		lineageTag: b1d2ddb4-ae99-4282-bd0c-e28eccaf4134
+		summarizeBy: none
+		sourceColumn: Sick(Boolean)
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	column Price_Ranges
+		dataType: string
+		lineageTag: 7c72b6eb-25cc-4d32-a29b-11c706678131
+		summarizeBy: none
+		sourceColumn: Price_Ranges
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isText":true}
+
+	partition Finance_Data-5f2e58d0-df28-4f4b-a4eb-90b68456dfc2 = m
+		mode: import
+		source =
+				let
+				    Source = Folder.Files("C:\Users\AJ\Desktop\Finance_Analysis_PowerBI\Finance_Data"),
+				    #"Removed Other Columns" = Table.SelectColumns(Source,{"Content", "Name"}),
+				    #"Added Custom" = Table.AddColumn(#"Removed Other Columns", "excel_file_data", each Excel.Workbook([Content])),
+				    #"Expanded excel_file_data" = Table.ExpandTableColumn(#"Added Custom", "excel_file_data", {"Name", "Data", "Item", "Kind", "Hidden"}, {"excel_file_data.Name", "excel_file_data.Data", "excel_file_data.Item", "excel_file_data.Kind", "excel_file_data.Hidden"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Expanded excel_file_data", each ([excel_file_data.Name] = "Sheet1")),
+				    #"Removed Other Columns1" = Table.SelectColumns(#"Filtered Rows",{"Name", "excel_file_data.Data"}),
+				    #"Added Custom1" = Table.AddColumn(#"Removed Other Columns1", "Custom", each Table.PromoteHeaders([excel_file_data.Data])),
+				    #"Expanded Custom" = Table.ExpandTableColumn(#"Added Custom1", "Custom", {"DATE", "LOCATION", "ITEM", "COST", "TOTAL", "COMMENTS"}, {"DATE", "LOCATION", "ITEM", "COST", "TOTAL", "COMMENTS"}),
+				    #"Removed Columns" = Table.RemoveColumns(#"Expanded Custom",{"Name", "excel_file_data.Data", "TOTAL"}),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Removed Columns",{{"DATE", type date}, {"COST", Currency.Type}}),
+				    #"Filtered Rows2" = Table.SelectRows(#"Changed Type", each [LOCATION] <> null and [LOCATION] <> ""),
+				    #"Removed Errors" = Table.RemoveRowsWithErrors(#"Filtered Rows2", {"DATE"}),
+				    #"Sorted Rows" = Table.Sort(#"Removed Errors",{{"ITEM", Order.Ascending}}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Sorted Rows","Restauran","Restaurant",Replacer.ReplaceValue,{"ITEM"}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","Chiro","Chiropractor",Replacer.ReplaceValue,{"ITEM"}),
+				    #"Replaced Value2" = Table.ReplaceValue(#"Replaced Value1","Hair-Cut","Hair Cut",Replacer.ReplaceValue,{"ITEM"}),
+				    #"Replaced Value3" = Table.ReplaceValue(#"Replaced Value2","Haircut","Hair Cut",Replacer.ReplaceValue,{"ITEM"}),
+				    #"Replaced Value4" = Table.ReplaceValue(#"Replaced Value3","Pass","Bus Pass",Replacer.ReplaceValue,{"ITEM"}),
+				    #"Replaced Value5" = Table.ReplaceValue(#"Replaced Value4","Personal Items","Personal",Replacer.ReplaceValue,{"ITEM"}),
+				    #"Replaced Value6" = Table.ReplaceValue(#"Replaced Value5","Monthly Pass","Bus Pass",Replacer.ReplaceValue,{"ITEM"}),
+				    #"Replaced Value7" = Table.ReplaceValue(#"Replaced Value6","?????","Virgin Mobile",Replacer.ReplaceText,{"LOCATION"}),
+				    #"Replaced Value8" = Table.ReplaceValue(#"Replaced Value7","Bake Chef","Bake Chef Co",Replacer.ReplaceValue,{"LOCATION"}),
+				    #"Replaced Value9" = Table.ReplaceValue(#"Replaced Value8","Bakechef","Bake Chef Co",Replacer.ReplaceText,{"LOCATION"}),
+				    #"Replaced Value10" = Table.ReplaceValue(#"Replaced Value9","Longond Drugs","London Drugs",Replacer.ReplaceText,{"LOCATION"}),
+				    #"Replaced Value11" = Table.ReplaceValue(#"Replaced Value10","McDonalds","McDonald's",Replacer.ReplaceValue,{"LOCATION"}),
+				    #"Replaced Value12" = Table.ReplaceValue(#"Replaced Value11","Peter Lougheed Centre","Peter Lougheed",Replacer.ReplaceValue,{"LOCATION"}),
+				    #"Replaced Value13" = Table.ReplaceValue(#"Replaced Value12","Peter Lougheed","Peter Lougheed Hospital",Replacer.ReplaceValue,{"LOCATION"}),
+				    #"Replaced Value14" = Table.ReplaceValue(#"Replaced Value13","PLC","Peter Lougheed Hospital",Replacer.ReplaceText,{"LOCATION"}),
+				    #"Replaced Value15" = Table.ReplaceValue(#"Replaced Value14","Tim Hortons","Tim Horton's",Replacer.ReplaceValue,{"LOCATION"}),
+				    #"Replaced Value16" = Table.ReplaceValue(#"Replaced Value15","SU Wellness","Wellness Centre",Replacer.ReplaceValue,{"LOCATION"}),
+				    #"Replaced Value17" = Table.ReplaceValue(#"Replaced Value16","UofC","Active Living",Replacer.ReplaceValue,{"LOCATION"}),
+				    #"Replaced Value18" = Table.ReplaceValue(#"Replaced Value17","Wellness Center","Wellness Centre",Replacer.ReplaceText,{"LOCATION"}),
+				    #"Replaced Value19" = Table.ReplaceValue(#"Replaced Value18","Walmart","Wal-Mart",Replacer.ReplaceText,{"LOCATION"}),
+				    #"Replaced Value20" = Table.ReplaceValue(#"Replaced Value19","Old Navy Online","Old Navy",Replacer.ReplaceValue,{"LOCATION"}),
+				    #"Replaced Value21" = Table.ReplaceValue(#"Replaced Value20","Portal Game","Entertainment",Replacer.ReplaceText,{"ITEM"}),
+				    #"Multiplied Column" = Table.TransformColumns(#"Replaced Value21", {{"COST", each _ * -1, Currency.Type}}),
+				    #"Replaced Value22" = Table.ReplaceValue(#"Multiplied Column","red","Restaurant",Replacer.ReplaceText,{"ITEM"}),
+				    #"Capitalized Each Word" = Table.TransformColumns(#"Replaced Value22",{{"ITEM", Text.Proper, type text}}),
+				    #"Added Conditional Column" = Table.AddColumn(#"Capitalized Each Word", "Food(Boolean)", each if [ITEM] = "Food" then "Food" else if [ITEM] = "Restaurant" then "Restaurant" else "Other"),
+				    #"Sorted Rows1" = Table.Sort(#"Added Conditional Column",{{"ITEM", Order.Descending}}),
+				    #"Added Conditional Column1" = Table.AddColumn(#"Sorted Rows1", "Sick(Boolean)", each if Text.Contains([COMMENTS], "sick") then "Sick" else if Text.Contains([COMMENTS], "Sick") then "Sick" else "Healthy"),
+				    #"Replaced Errors" = Table.ReplaceErrorValues(#"Added Conditional Column1", {{"Sick(Boolean)", "Healthy"}}),
+				    #"Added Conditional Column2" = Table.AddColumn(#"Replaced Errors", "Price_Ranges", each if [COST] <= 20 then "$0 - $20" else if [COST] <= 50 then "$20 - $50" else if [COST] <= 100 then "$50 - $100" else ">$100")
+				in
+				    #"Added Conditional Column2"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
