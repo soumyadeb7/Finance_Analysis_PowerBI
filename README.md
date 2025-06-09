@@ -32,7 +32,7 @@ In order to answer these questions, I invested time in planning the PowerBI meas
 
 Here are the dashboards that I created. If you would like to actually play around with these dashboards see the end of this readme for instructions:
 
-![alt text][ExecSumm]
+![alt text][ExecSumm](https://github.com/soumyadeb7/Finance_Analysis_PowerBI/blob/main/Finance_Analysis_PowerBI-master/images/executive_summary.png)
 
 ![alt text][Granular]
 
